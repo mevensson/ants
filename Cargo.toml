@@ -1,0 +1,7 @@
+[package]
+name = "ants"
+version = "0.1.0"
+authors = ["Mattias Evensson <mattias@evensson.eu>"]
+edition = "2018"
+
+[dependencies]
