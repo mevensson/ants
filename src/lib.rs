@@ -1,28 +1,14 @@
-use std::collections::HashMap;
-use std::error::Error;
-use std::io::BufRead;
+mod state_machine;
 
-#[derive(Debug)]
-pub struct Settings {
-    pub values: HashMap<String, String>,
-}
+pub use crate::state_machine::State;
+pub use crate::state_machine::StateMachine;
 
-impl Settings {
-    pub fn parse<R>(mut reader: R) -> Result<Settings, Box<dyn Error>>
-    where
-        R: BufRead,
-    {
-        let mut line = String::new();
-        reader.read_line(&mut line).unwrap();
-        if line != "turn 0" {
-            return Err(From::from("Settings does not start with 'turn 0'"));
-        }
-        Ok(Settings {
-            values: HashMap::new(),
-        })
-    }
-}
+use std::io;
 
-pub fn run(_settings: Settings) -> Result<(), Box<dyn Error>> {
-    Ok(())
+#[cfg(test)]
+mod test;
+
+pub fn run<'a>(start_state: Box<State<'a> + 'a>, reader: &mut io::BufRead) {
+    let mut state_machine = StateMachine::new(start_state);
+    while !state_machine.parse(reader) {}
 }
