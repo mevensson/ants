@@ -1,6 +1,6 @@
 use super::run;
 use crate::state_machine;
-use std::io;
+use std::io::BufRead;
 
 struct TestState<'a> {
     num_calls: &'a mut i32,
@@ -13,10 +13,7 @@ impl<'a> TestState<'a> {
 }
 
 impl<'a> state_machine::State<'a> for TestState<'a> {
-    fn parse(
-        self: Box<Self>,
-        _reader: &mut io::BufRead,
-    ) -> Option<Box<state_machine::State<'a> + 'a>> {
+    fn parse(self: Box<Self>, _reader: &mut BufRead) -> Option<Box<state_machine::State<'a> + 'a>> {
         *self.num_calls -= 1;
         if *self.num_calls == 0 {
             None

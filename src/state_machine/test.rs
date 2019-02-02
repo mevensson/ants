@@ -1,6 +1,6 @@
 use super::State;
 use super::StateMachine;
-use std::io;
+use std::io::BufRead;
 
 #[derive(Clone)]
 struct TestState {
@@ -14,7 +14,7 @@ impl TestState {
 }
 
 impl<'a> State<'a> for TestState {
-    fn parse(self: Box<Self>, _reader: &mut io::BufRead) -> Option<Box<State<'a> + 'a>> {
+    fn parse(self: Box<Self>, _reader: &mut BufRead) -> Option<Box<State<'a> + 'a>> {
         match &self.next_state {
             Some(next_state) => Some(next_state.clone()),
             None => None,
