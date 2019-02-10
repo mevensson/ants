@@ -18,7 +18,12 @@ impl<'a> state_machine::State<'a> for TurnXState {
         "turn_x_state"
     }
 
-    fn parse(self: Box<Self>, _reader: &mut BufRead) -> Option<Box<state_machine::State<'a> + 'a>> {
+    fn parse(self: Box<Self>, reader: &mut BufRead) -> Option<Box<state_machine::State<'a> + 'a>> {
+        for line in reader.lines() {
+            if line.unwrap() == "go" {
+                break;
+            }
+        }
         None
     }
 }

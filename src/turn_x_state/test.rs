@@ -11,6 +11,20 @@ fn should_have_turn_x_state_as_name() {
 }
 
 #[test]
+fn should_read_until_go() {
+    let input = b"\
+go
+1";
+    let mut reader = BufReader::new(&input[..]);
+
+    let state = TurnXState::new();
+
+    state.parse(&mut reader);
+
+    assert_eq!(reader.bytes().count(), 1);
+}
+
+#[test]
 fn should_end() {
     let input = b"";
     let mut reader = BufReader::new(&input[..]);
