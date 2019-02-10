@@ -4,6 +4,9 @@ mod test;
 use std::io::BufRead;
 
 pub trait State<'a> {
+    fn name(self: Box<Self>) -> &'a str {
+        ""
+    }
     fn parse(self: Box<Self>, reader: &mut BufRead) -> Option<Box<State<'a> + 'a>>;
 }
 
