@@ -3,7 +3,7 @@ mod test;
 
 use super::state_machine;
 
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 
 pub struct EndState {}
 
@@ -18,7 +18,11 @@ impl<'a> state_machine::State<'a> for EndState {
         "end_state"
     }
 
-    fn parse(self: Box<Self>, reader: &mut BufRead) -> Option<Box<state_machine::State<'a> + 'a>> {
+    fn parse(
+        self: Box<Self>,
+        reader: &mut BufRead,
+        _writer: &mut Write,
+    ) -> Option<Box<state_machine::State<'a> + 'a>> {
         for line in reader.lines() {
             if line.unwrap() == "go" {
                 break;

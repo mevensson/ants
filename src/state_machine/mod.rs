@@ -1,13 +1,17 @@
 #[cfg(test)]
 mod test;
 
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 
 pub trait State<'a> {
     fn name(self: Box<Self>) -> &'a str {
         ""
     }
-    fn parse(self: Box<Self>, reader: &mut BufRead) -> Option<Box<State<'a> + 'a>>;
+    fn parse(
+        self: Box<Self>,
+        reader: &mut BufRead,
+        writer: &mut Write,
+    ) -> Option<Box<State<'a> + 'a>>;
 }
 
 pub struct StateMachine<'a> {
@@ -21,10 +25,10 @@ impl<'a> StateMachine<'a> {
         }
     }
 
-    pub fn parse(&mut self, reader: &mut BufRead) -> bool {
+    pub fn parse(&mut self, reader: &mut BufRead, writer: &mut Write) -> bool {
         match self.current_state.take() {
             Some(cs) => {
-                let res = cs.parse(reader);
+                let res = cs.parse(reader, writer);
                 match res {
                     Some(next_state) => {
                         self.current_state = Some(next_state);

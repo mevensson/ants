@@ -16,10 +16,11 @@ fn should_read_until_go() {
 go
 1";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let state = EndState::new();
 
-    state.parse(&mut reader);
+    state.parse(&mut reader, &mut output);
 
     assert_eq!(reader.bytes().count(), 1);
 }
@@ -28,10 +29,11 @@ go
 fn should_end() {
     let input = b"ready";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let state = EndState::new();
 
-    let next_state = state.parse(&mut reader);
+    let next_state = state.parse(&mut reader, &mut output);
 
     assert!(next_state.is_none());
 }

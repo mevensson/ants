@@ -4,6 +4,8 @@ use std::io;
 fn main() {
     let start_state = StartState::new();
     let stdin = io::stdin();
+    let stdout = io::stdout();
     let mut input = stdin.lock();
-    ants::run(start_state, &mut input);
+    let mut output = stdout.lock();
+    ants::run(start_state, &mut input, &mut output);
 }

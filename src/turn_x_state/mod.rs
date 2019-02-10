@@ -4,7 +4,7 @@ mod test;
 use super::end_state::EndState;
 use super::state_machine;
 
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 
 pub struct TurnXState {}
 
@@ -19,12 +19,19 @@ impl<'a> state_machine::State<'a> for TurnXState {
         "turn_x_state"
     }
 
-    fn parse(self: Box<Self>, reader: &mut BufRead) -> Option<Box<state_machine::State<'a> + 'a>> {
+    fn parse(
+        self: Box<Self>,
+        reader: &mut BufRead,
+        writer: &mut Write,
+    ) -> Option<Box<state_machine::State<'a> + 'a>> {
         for line in reader.lines() {
             if line.unwrap() == "go" {
                 break;
             }
         }
+
+        writer.write("go\n".as_bytes()).ok();
+
         for line in reader.lines() {
             let line = line.unwrap();
             if line.starts_with("turn ") {

@@ -1,6 +1,6 @@
 use super::State;
 use super::StateMachine;
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 
 #[derive(Clone)]
 struct TestState {
@@ -14,7 +14,11 @@ impl TestState {
 }
 
 impl<'a> State<'a> for TestState {
-    fn parse(self: Box<Self>, _reader: &mut BufRead) -> Option<Box<State<'a> + 'a>> {
+    fn parse(
+        self: Box<Self>,
+        _reader: &mut BufRead,
+        _writer: &mut Write,
+    ) -> Option<Box<State<'a> + 'a>> {
         match &self.next_state {
             Some(next_state) => Some(next_state.clone()),
             None => None,
@@ -28,7 +32,8 @@ fn should_end_on_none_state() {
     let mut state_machine = StateMachine::new(start_state);
 
     let mut input = "".as_bytes();
-    let done = state_machine.parse(&mut input);
+    let mut output = Vec::new();
+    let done = state_machine.parse(&mut input, &mut output);
 
     assert_eq!(done, true);
 }
@@ -40,7 +45,8 @@ fn should_not_end_on_some_state() {
     let mut state_machine = StateMachine::new(start_state);
 
     let mut input = "".as_bytes();
-    let done = state_machine.parse(&mut input);
+    let mut output = Vec::new();
+    let done = state_machine.parse(&mut input, &mut output);
 
     assert_eq!(done, false);
 }
@@ -52,8 +58,9 @@ fn should_remember_next_state() {
     let mut state_machine = StateMachine::new(start_state);
 
     let mut input = "".as_bytes();
-    state_machine.parse(&mut input);
-    let done = state_machine.parse(&mut input);
+    let mut output = Vec::new();
+    state_machine.parse(&mut input, &mut output);
+    let done = state_machine.parse(&mut input, &mut output);
 
     assert_eq!(done, true);
 }

@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 #[test]
-fn should_read_turn_0() {
+fn should_handle_sample_input() {
     let input = b"\
 turn 0
 loadtime 3000
@@ -17,20 +17,6 @@ attackradius2 5
 spawnradius2 1
 player_seed 42
 ready
-";
-    let mut reader = BufReader::new(&input[..]);
-
-    let start_state = StartState::new();
-    ants::run(start_state, &mut reader);
-
-    assert_eq!(reader.bytes().count(), 0);
-}
-
-#[test]
-fn should_read_turn_1() {
-    let input = b"\
-turn 0
-ready
 
 turn 1
 f 6 5
@@ -39,23 +25,6 @@ a 7 9 1
 a 10 8 0
 a 10 9 0
 h 7 12 1
-go
-";
-    let mut reader = BufReader::new(&input[..]);
-
-    let start_state = StartState::new();
-    ants::run(start_state, &mut reader);
-
-    assert_eq!(reader.bytes().count(), 0);
-}
-
-#[test]
-fn should_read_end() {
-    let input = b"\
-turn 0
-ready
-
-turn 1
 go
 
 end
@@ -68,9 +37,17 @@ a 9 9 0
 go
 ";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let start_state = StartState::new();
-    ants::run(start_state, &mut reader);
+    ants::run(start_state, &mut reader, &mut output);
 
     assert_eq!(reader.bytes().count(), 0);
+
+    let output = String::from_utf8(output).unwrap();
+    let expected_output = "\
+go
+go
+";
+    assert_eq!(output, expected_output);
 }

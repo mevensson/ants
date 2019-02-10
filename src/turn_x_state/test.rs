@@ -18,12 +18,29 @@ go
 turn 2
 1";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let state = TurnXState::new();
 
-    state.parse(&mut reader);
+    state.parse(&mut reader, &mut output);
 
     assert_eq!(reader.bytes().count(), 1);
+}
+
+#[test]
+fn should_write_go() {
+    let input = b"\
+ready
+";
+    let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
+
+    let state = TurnXState::new();
+
+    state.parse(&mut reader, &mut output);
+
+    let output = String::from_utf8(output).unwrap();
+    assert_eq!(output, "go\n");
 }
 
 #[test]
@@ -34,9 +51,10 @@ go
 turn 2
 ";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let state = TurnXState::new();
-    let next_state = state.parse(&mut reader).unwrap();
+    let next_state = state.parse(&mut reader, &mut output).unwrap();
 
     assert_eq!(next_state.name(), "turn_x_state");
 }
@@ -49,9 +67,10 @@ go
 end
 ";
     let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
 
     let state = TurnXState::new();
-    let next_state = state.parse(&mut reader).unwrap();
+    let next_state = state.parse(&mut reader, &mut output).unwrap();
 
     assert_eq!(next_state.name(), "end_state");
 }
