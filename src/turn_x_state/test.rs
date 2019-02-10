@@ -14,6 +14,8 @@ fn should_have_turn_x_state_as_name() {
 fn should_read_until_go() {
     let input = b"\
 go
+
+turn 2
 1";
     let mut reader = BufReader::new(&input[..]);
 
@@ -25,12 +27,31 @@ go
 }
 
 #[test]
-fn should_end() {
-    let input = b"";
+fn should_stay_in_turn_x_state() {
+    let input = b"\
+go
+
+turn 2
+";
     let mut reader = BufReader::new(&input[..]);
 
     let state = TurnXState::new();
-    let next_state = state.parse(&mut reader);
+    let next_state = state.parse(&mut reader).unwrap();
 
-    assert!(next_state.is_none());
+    assert_eq!(next_state.name(), "turn_x_state");
+}
+
+#[test]
+fn should_go_to_end_state_on_end() {
+    let input = b"\
+go
+
+end
+";
+    let mut reader = BufReader::new(&input[..]);
+
+    let state = TurnXState::new();
+    let next_state = state.parse(&mut reader).unwrap();
+
+    assert_eq!(next_state.name(), "end_state");
 }
