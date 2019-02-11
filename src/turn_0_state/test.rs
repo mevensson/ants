@@ -1,12 +1,27 @@
-use super::state_machine::State;
+use crate::state_machine::State;
+use crate::strategies::Strategy;
+
 use super::Turn0State;
 
 use std::io::prelude::*;
 use std::io::BufReader;
 
+struct TestStrategy {}
+
+impl TestStrategy {
+    fn new() -> Self {
+        TestStrategy {}
+    }
+}
+
+impl Strategy for TestStrategy {
+    fn run(&mut self) {}
+}
+
 #[test]
 fn should_have_turn_0_state_as_name() {
-    let state = Turn0State::new();
+    let mut strategy = TestStrategy::new();
+    let state = Turn0State::new(&mut strategy);
     assert_eq!(state.name(), "turn_0_state");
 }
 
@@ -18,7 +33,8 @@ ready
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let state = Turn0State::new();
+    let mut strategy = TestStrategy::new();
+    let state = Turn0State::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
 
@@ -33,7 +49,8 @@ ready
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let state = Turn0State::new();
+    let mut strategy = TestStrategy::new();
+    let state = Turn0State::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
 
@@ -47,7 +64,8 @@ fn should_go_to_turn_x_state() {
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let state = Turn0State::new();
+    let mut strategy = TestStrategy::new();
+    let state = Turn0State::new(&mut strategy);
 
     let next_state = state.parse(&mut reader, &mut output).unwrap();
 

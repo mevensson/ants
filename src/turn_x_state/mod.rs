@@ -3,18 +3,21 @@ mod test;
 
 use super::end_state::EndState;
 use super::state_machine;
+use super::strategies::Strategy;
 
 use std::io::{BufRead, Write};
 
-pub struct TurnXState {}
+pub struct TurnXState<'a> {
+    strategy: &'a mut Strategy,
+}
 
-impl TurnXState {
-    pub fn new() -> Box<Self> {
-        Box::new(TurnXState {})
+impl<'a> TurnXState<'a> {
+    pub fn new(strategy: &'a mut Strategy) -> Box<Self> {
+        Box::new(TurnXState { strategy })
     }
 }
 
-impl<'a> state_machine::State<'a> for TurnXState {
+impl<'a> state_machine::State<'a> for TurnXState<'a> {
     fn name(self: Box<Self>) -> &'a str {
         "turn_x_state"
     }
@@ -30,6 +33,7 @@ impl<'a> state_machine::State<'a> for TurnXState {
             }
         }
 
+        self.strategy.run();
         writer.write("go\n".as_bytes()).ok();
 
         for line in reader.lines() {

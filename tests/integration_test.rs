@@ -1,7 +1,19 @@
-use ants::{self, StartState};
+use ants::{self, StartState, Strategy};
 
 use std::io::prelude::*;
 use std::io::BufReader;
+
+struct TestStrategy {}
+
+impl TestStrategy {
+    fn new() -> Self {
+        TestStrategy {}
+    }
+}
+
+impl Strategy for TestStrategy {
+    fn run(&mut self) {}
+}
 
 #[test]
 fn should_handle_sample_input() {
@@ -39,7 +51,8 @@ go
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let start_state = StartState::new();
+    let mut strategy = TestStrategy::new();
+    let start_state = StartState::new(&mut strategy);
     ants::run(start_state, &mut reader, &mut output);
 
     assert_eq!(reader.bytes().count(), 0);
