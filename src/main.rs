@@ -1,20 +1,8 @@
-use ants::{self, Ant, Food, StartState, Strategy};
+use ants::{self, HuntFoodStrategy, StartState};
 use std::io;
 
-struct DummyStrategy {}
-
-impl DummyStrategy {
-    fn new() -> Self {
-        DummyStrategy {}
-    }
-}
-
-impl Strategy for DummyStrategy {
-    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) {}
-}
-
 fn main() {
-    let mut strategy = DummyStrategy::new();
+    let mut strategy = HuntFoodStrategy::new();
     let start_state = StartState::new(&mut strategy);
     let stdin = io::stdin();
     let stdout = io::stdout();

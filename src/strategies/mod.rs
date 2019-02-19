@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod test;
 
+pub mod hunt_food;
+
 #[derive(Debug, PartialEq)]
 pub struct Ant {
     row: i16,
@@ -49,5 +51,5 @@ impl Food {
 }
 
 pub trait Strategy {
-    fn run(&mut self, ant: Vec<Ant>, food: Vec<Food>);
+    fn run(&mut self, ants: Vec<Ant>, food: Vec<Food>);
 }
