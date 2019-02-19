@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test;
 
-use super::{Ant, Food, Strategy};
+use super::{Ant, Command, Food, Strategy};
 
 pub struct HuntFoodStrategy {}
 
@@ -12,5 +12,7 @@ impl HuntFoodStrategy {
 }
 
 impl Strategy for HuntFoodStrategy {
-    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) {}
+    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) -> Vec<Command> {
+        Vec::new()
+    }
 }

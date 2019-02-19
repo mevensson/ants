@@ -4,7 +4,7 @@ mod strategies;
 mod turn_0_state;
 mod turn_x_state;
 
-pub use crate::strategies::{Ant, Food, Strategy};
+pub use crate::strategies::{Ant, Command, Food, Strategy};
 pub use crate::strategies::hunt_food::HuntFoodStrategy;
 pub use crate::turn_0_state::Turn0State as StartState;
 

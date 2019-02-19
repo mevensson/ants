@@ -1,5 +1,5 @@
 use crate::state_machine::State;
-use crate::strategies::{Ant, Food, Strategy};
+use crate::strategies::{Ant, Command, Food, Strategy};
 
 use super::Turn0State;
 
@@ -15,7 +15,9 @@ impl TestStrategy {
 }
 
 impl Strategy for TestStrategy {
-    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) {}
+    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) -> Vec<Command> {
+        Vec::new()
+    }
 }
 
 #[test]

@@ -50,6 +50,8 @@ impl Food {
     }
 }
 
+pub struct Command {}
+
 pub trait Strategy {
-    fn run(&mut self, ants: Vec<Ant>, food: Vec<Food>);
+    fn run(&mut self, ants: Vec<Ant>, food: Vec<Food>) -> Vec<Command>;
 }
