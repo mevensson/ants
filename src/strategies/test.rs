@@ -1,4 +1,4 @@
-use super::Ant;
+use super::{Ant, Food};
 
 #[test]
 fn should_parse_ant() {
@@ -8,4 +8,14 @@ fn should_parse_ant() {
 
     let expected_ant = Ant::new(1, 2, 3);
     assert_eq!(ant, expected_ant);
+}
+
+#[test]
+fn should_parse_food() {
+    let food_string = "1 2";
+
+    let food = Food::parse(food_string);
+
+    let expected_food = Food::new(1, 2);
+    assert_eq!(food, expected_food);
 }

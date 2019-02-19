@@ -26,6 +26,28 @@ impl Ant {
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub struct Food {
+    row: i16,
+    col: i16,
+}
+
+impl Food {
+    pub fn new(row: i16, col: i16) -> Self {
+        Food { row, col }
+    }
+
+    pub fn parse(string: &str) -> Self {
+        let mut tokens = string.split_whitespace();
+        let row = tokens.next().unwrap();
+        let col = tokens.next().unwrap();
+        Food {
+            row: row.parse().unwrap(),
+            col: col.parse().unwrap(),
+        }
+    }
+}
+
 pub trait Strategy {
-    fn run(&mut self, ant: Vec<Ant>);
+    fn run(&mut self, ant: Vec<Ant>, food: Vec<Food>);
 }
