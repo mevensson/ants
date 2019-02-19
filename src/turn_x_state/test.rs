@@ -1,5 +1,5 @@
 use crate::state_machine::State;
-use crate::strategies::Strategy;
+use crate::strategies::{Ant, Strategy};
 
 use super::TurnXState;
 
@@ -7,19 +7,19 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 struct TestStrategy<'a> {
-    run_called: Option<&'a mut bool>,
+    ants: Option<&'a mut Vec<Ant>>,
 }
 
 impl<'a> TestStrategy<'a> {
-    fn new(run_called: Option<&'a mut bool>) -> Self {
-        TestStrategy { run_called }
+    fn new(ants: Option<&'a mut Vec<Ant>>) -> Self {
+        TestStrategy { ants }
     }
 }
 
 impl<'a> Strategy for TestStrategy<'a> {
-    fn run(&mut self) {
-        match &mut self.run_called {
-            Some(run_called) => **run_called = true,
+    fn run(&mut self, mut new_ants: Vec<Ant>) {
+        match &mut self.ants {
+            Some(ants) => ants.append(&mut new_ants),
             None => {}
         }
     }
@@ -51,6 +51,27 @@ turn 2
 }
 
 #[test]
+fn should_parse_ants_and_pass_them_to_strategy() {
+    let input = b"\
+a 1 2 3
+a 4 5 6
+ready
+";
+    let mut reader = BufReader::new(&input[..]);
+    let mut output = Vec::new();
+
+    let mut ants = Vec::new();
+    let mut strategy = TestStrategy::new(Some(&mut ants));
+    let state = TurnXState::new(&mut strategy);
+
+    state.parse(&mut reader, &mut output);
+
+    assert_eq!(ants.len(), 2);
+    assert_eq!(ants[0], Ant::new(1, 2, 3));
+    assert_eq!(ants[1], Ant::new(4, 5, 6));
+}
+
+#[test]
 fn should_write_go() {
     let input = b"\
 ready
@@ -65,23 +86,6 @@ ready
 
     let output = String::from_utf8(output).unwrap();
     assert_eq!(output, "go\n");
-}
-
-#[test]
-fn should_run_strategy() {
-    let input = b"\
-ready
-";
-    let mut reader = BufReader::new(&input[..]);
-    let mut output = Vec::new();
-
-    let mut run_called = false;
-    let mut strategy = TestStrategy::new(Some(&mut run_called));
-    let state = TurnXState::new(&mut strategy);
-
-    state.parse(&mut reader, &mut output);
-
-    assert!(run_called);
 }
 
 #[test]

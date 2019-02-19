@@ -1,4 +1,4 @@
-use ants::{self, StartState, Strategy};
+use ants::{self, Ant, StartState, Strategy};
 
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -12,7 +12,7 @@ impl TestStrategy {
 }
 
 impl Strategy for TestStrategy {
-    fn run(&mut self) {}
+    fn run(&mut self, _ants: Vec<Ant>) {}
 }
 
 #[test]

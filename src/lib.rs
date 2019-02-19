@@ -4,7 +4,7 @@ mod strategies;
 mod turn_0_state;
 mod turn_x_state;
 
-pub use crate::strategies::Strategy;
+pub use crate::strategies::{Ant, Strategy};
 pub use crate::turn_0_state::Turn0State as StartState;
 
 use crate::state_machine::State;

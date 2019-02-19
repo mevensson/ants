@@ -1,4 +1,4 @@
-use ants::{self, StartState, Strategy};
+use ants::{self, Ant, StartState, Strategy};
 use std::io;
 
 struct DummyStrategy {}
@@ -10,7 +10,7 @@ impl DummyStrategy {
 }
 
 impl Strategy for DummyStrategy {
-    fn run(&mut self) {}
+    fn run(&mut self, _ants: Vec<Ant>) {}
 }
 
 fn main() {
