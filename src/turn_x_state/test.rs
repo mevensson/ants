@@ -1,5 +1,5 @@
 use crate::state_machine::State;
-use crate::strategies::{Ant, Command, Food, Location, Strategy};
+use crate::strategies::{Ant, Command, Direction, Food, Location, Strategy};
 
 use super::TurnXState;
 
@@ -9,11 +9,20 @@ use std::io::BufReader;
 struct TestStrategy<'a> {
     ants: Option<&'a mut Vec<Ant>>,
     food: Option<&'a mut Vec<Food>>,
+    commands: Option<Vec<Command>>,
 }
 
 impl<'a> TestStrategy<'a> {
-    fn new(ants: Option<&'a mut Vec<Ant>>, food: Option<&'a mut Vec<Food>>) -> Self {
-        TestStrategy { ants, food }
+    fn new(
+        ants: Option<&'a mut Vec<Ant>>,
+        food: Option<&'a mut Vec<Food>>,
+        commands: Option<Vec<Command>>,
+    ) -> Self {
+        TestStrategy {
+            ants,
+            food,
+            commands,
+        }
     }
 }
 
@@ -27,13 +36,16 @@ impl<'a> Strategy for TestStrategy<'a> {
             Some(food) => food.extend(new_food),
             None => {}
         }
-        Vec::new()
+        match &self.commands {
+            Some(commands) => commands.clone(),
+            None => Vec::new(),
+        }
     }
 }
 
 #[test]
 fn should_have_turn_x_state_as_name() {
-    let mut strategy = TestStrategy::new(None, None);
+    let mut strategy = TestStrategy::new(None, None, None);
     let state = TurnXState::new(&mut strategy);
     assert_eq!(state.name(), "turn_x_state");
 }
@@ -48,7 +60,7 @@ turn 2
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let mut strategy = TestStrategy::new(None, None);
+    let mut strategy = TestStrategy::new(None, None, None);
     let state = TurnXState::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
@@ -67,7 +79,7 @@ ready
     let mut output = Vec::new();
 
     let mut ants = Vec::new();
-    let mut strategy = TestStrategy::new(Some(&mut ants), None);
+    let mut strategy = TestStrategy::new(Some(&mut ants), None, None);
     let state = TurnXState::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
@@ -88,7 +100,7 @@ ready
     let mut output = Vec::new();
 
     let mut food = Vec::new();
-    let mut strategy = TestStrategy::new(None, Some(&mut food));
+    let mut strategy = TestStrategy::new(None, Some(&mut food), None);
     let state = TurnXState::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
@@ -99,20 +111,32 @@ ready
 }
 
 #[test]
-fn should_write_go() {
+fn should_write_commands_and_go() {
     let input = b"\
 ready
 ";
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let mut strategy = TestStrategy::new(None, None);
+    let commands = vec![
+        Command::new(Location::new(1, 2), Direction::North),
+        Command::new(Location::new(3, 4), Direction::East),
+        Command::new(Location::new(5, 6), Direction::South),
+        Command::new(Location::new(7, 8), Direction::West),
+    ];
+    let mut strategy = TestStrategy::new(None, None, Some(commands));
     let state = TurnXState::new(&mut strategy);
 
     state.parse(&mut reader, &mut output);
 
     let output = String::from_utf8(output).unwrap();
-    assert_eq!(output, "go\n");
+    let expected_output = "\
+o 1 2 N
+o 3 4 E
+o 5 6 S
+o 7 8 W
+go\n";
+    assert_eq!(output, expected_output);
 }
 
 #[test]
@@ -125,7 +149,7 @@ turn 2
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let mut strategy = TestStrategy::new(None, None);
+    let mut strategy = TestStrategy::new(None, None, None);
     let state = TurnXState::new(&mut strategy);
     let next_state = state.parse(&mut reader, &mut output).unwrap();
 
@@ -142,7 +166,7 @@ end
     let mut reader = BufReader::new(&input[..]);
     let mut output = Vec::new();
 
-    let mut strategy = TestStrategy::new(None, None);
+    let mut strategy = TestStrategy::new(None, None, None);
     let state = TurnXState::new(&mut strategy);
     let next_state = state.parse(&mut reader, &mut output).unwrap();
 

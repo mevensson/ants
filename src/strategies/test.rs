@@ -1,4 +1,4 @@
-use super::{Ant, Direction, Food, Location};
+use super::{Ant, Command, Direction, Food, Location};
 
 #[test]
 fn should_parse_ant() {
@@ -71,5 +71,39 @@ fn should_calculate_closest_direction() {
     assert_eq!(
         Location::closest_direction(&Location::new(row, col), &Location::new(row + 4, col - 5)),
         Direction::West
+    );
+}
+
+#[test]
+fn should_format_direction() {
+    assert_eq!(Direction::North.to_string(), "N");
+    assert_eq!(Direction::East.to_string(), "E");
+    assert_eq!(Direction::South.to_string(), "S");
+    assert_eq!(Direction::West.to_string(), "W");
+}
+
+#[test]
+fn should_format_location() {
+    assert_eq!(Location::new(1, 2).to_string(), "1 2");
+    assert_eq!(Location::new(23, 45).to_string(), "23 45");
+}
+
+#[test]
+fn should_format_command() {
+    assert_eq!(
+        Command::new(Location::new(1, 2), Direction::North).to_string(),
+        "o 1 2 N"
+    );
+    assert_eq!(
+        Command::new(Location::new(3, 4), Direction::East).to_string(),
+        "o 3 4 E"
+    );
+    assert_eq!(
+        Command::new(Location::new(5, 6), Direction::South).to_string(),
+        "o 5 6 S"
+    );
+    assert_eq!(
+        Command::new(Location::new(7, 8), Direction::West).to_string(),
+        "o 7 8 W"
     );
 }

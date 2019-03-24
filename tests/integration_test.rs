@@ -1,4 +1,4 @@
-use ants::{self, Ant, Command, Food, StartState, Strategy};
+use ants::{self, Ant, Command, Direction, Food, Location, StartState, Strategy};
 
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -13,7 +13,10 @@ impl TestStrategy {
 
 impl Strategy for TestStrategy {
     fn run(&mut self, _ants: &Vec<Ant>, _food: &Vec<Food>) -> Vec<Command> {
-        Vec::new()
+        vec![
+            Command::new(Location::new(10, 8), Direction::North),
+            Command::new(Location::new(10, 9), Direction::North),
+        ]
     }
 }
 
@@ -62,6 +65,8 @@ go
     let output = String::from_utf8(output).unwrap();
     let expected_output = "\
 go
+o 10 8 N
+o 10 9 N
 go
 ";
     assert_eq!(output, expected_output);

@@ -3,6 +3,8 @@ mod test;
 
 pub mod hunt_food;
 
+use std::fmt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Location {
     row: i16,
@@ -36,6 +38,12 @@ impl Location {
                 return Direction::West;
             }
         }
+    }
+}
+
+impl fmt::Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} {}", self.row, self.col)
     }
 }
 
@@ -88,6 +96,18 @@ pub enum Direction {
     West,
 }
 
+impl fmt::Display for Direction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let direction_string = match self {
+            Direction::North => "N",
+            Direction::East => "E",
+            Direction::South => "S",
+            Direction::West => "W",
+        };
+        write!(f, "{}", direction_string)
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Command {
     location: Location,
@@ -102,6 +122,13 @@ impl Command {
         }
     }
 }
+
+impl fmt::Display for Command {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "o {} {}", self.location, self.direction)
+    }
+}
+
 pub trait Strategy {
     fn run(&mut self, ants: &Vec<Ant>, food: &Vec<Food>) -> Vec<Command>;
 }

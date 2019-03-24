@@ -40,7 +40,10 @@ impl<'a> state_machine::State<'a> for TurnXState<'a> {
             }
         }
 
-        self.strategy.run(&ants, &food);
+        let commands = self.strategy.run(&ants, &food);
+        for command in commands {
+            writer.write(format!("{}\n", command).as_bytes()).ok();
+        }
         writer.write("go\n".as_bytes()).ok();
 
         for line in reader.lines() {
