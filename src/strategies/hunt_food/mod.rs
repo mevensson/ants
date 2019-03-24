@@ -29,6 +29,9 @@ impl Strategy for HuntFoodStrategy {
         let mut result = Vec::new();
         if !food.is_empty() {
             for ant in ants {
+                if ant.owner != 0 {
+                    continue;
+                }
                 let closest_food_location = HuntFoodStrategy::closest_food(&ant, food);
                 match closest_food_location {
                     Some(location) => {

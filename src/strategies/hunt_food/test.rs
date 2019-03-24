@@ -68,3 +68,21 @@ fn should_direct_ants_to_closest_food() {
         Command::new(Location::new(ant4_row, ant4_col), Direction::West)
     );
 }
+
+#[test]
+fn should_not_direct_other_players_ants() {
+    let ants = vec![
+        Ant::new(Location::new(10, 10), 1),
+        Ant::new(Location::new(20, 20), 2),
+    ];
+
+    let food = vec![
+        Food::new(Location::new(11, 10)),
+        Food::new(Location::new(20, 21)),
+    ];
+
+    let mut strategy = HuntFoodStrategy::new();
+    let commands = strategy.run(&ants, &food);
+
+    assert_eq!(commands.len(), 0);
+}
