@@ -16,7 +16,7 @@ impl Strategy for HuntFoodStrategy {
         let mut result = Vec::new();
         if !food.is_empty() {
             for ant in ants {
-                result.push(Command::new(ant.row, ant.col, Direction::North));
+                result.push(Command::new(ant.location, Direction::North));
             }
         }
         result

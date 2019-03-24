@@ -1,5 +1,5 @@
 use crate::state_machine::State;
-use crate::strategies::{Ant, Command, Food, Strategy};
+use crate::strategies::{Ant, Command, Food, Location, Strategy};
 
 use super::TurnXState;
 
@@ -73,8 +73,8 @@ ready
     state.parse(&mut reader, &mut output);
 
     assert_eq!(ants.len(), 2);
-    assert_eq!(ants[0], Ant::new(1, 2, 3));
-    assert_eq!(ants[1], Ant::new(4, 5, 6));
+    assert_eq!(ants[0], Ant::new(Location::new(1, 2), 3));
+    assert_eq!(ants[1], Ant::new(Location::new(4, 5), 6));
 }
 
 #[test]
@@ -94,8 +94,8 @@ ready
     state.parse(&mut reader, &mut output);
 
     assert_eq!(food.len(), 2);
-    assert_eq!(food[0], Food::new(1, 2));
-    assert_eq!(food[1], Food::new(3, 4));
+    assert_eq!(food[0], Food::new(Location::new(1, 2)));
+    assert_eq!(food[1], Food::new(Location::new(3, 4)));
 }
 
 #[test]

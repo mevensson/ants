@@ -4,15 +4,26 @@ mod test;
 pub mod hunt_food;
 
 #[derive(Debug, PartialEq)]
-pub struct Ant {
+pub struct Location {
     row: i16,
     col: i16,
+}
+
+impl Location {
+    pub fn new(row: i16, col: i16) -> Self {
+        Location { row, col }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Ant {
+    location: Location,
     owner: i16,
 }
 
 impl Ant {
-    pub fn new(row: i16, col: i16, owner: i16) -> Self {
-        Ant { row, col, owner }
+    pub fn new(location: Location, owner: i16) -> Self {
+        Ant { location, owner }
     }
 
     pub fn parse(string: &str) -> Self {
@@ -20,33 +31,28 @@ impl Ant {
         let row = tokens.next().unwrap();
         let col = tokens.next().unwrap();
         let owner = tokens.next().unwrap();
-        Ant {
-            row: row.parse().unwrap(),
-            col: col.parse().unwrap(),
-            owner: owner.parse().unwrap(),
-        }
+        Ant::new(
+            Location::new(row.parse().unwrap(), col.parse().unwrap()),
+            owner.parse().unwrap(),
+        )
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Food {
-    row: i16,
-    col: i16,
+    location: Location,
 }
 
 impl Food {
-    pub fn new(row: i16, col: i16) -> Self {
-        Food { row, col }
+    pub fn new(location: Location) -> Self {
+        Food { location }
     }
 
     pub fn parse(string: &str) -> Self {
         let mut tokens = string.split_whitespace();
         let row = tokens.next().unwrap();
         let col = tokens.next().unwrap();
-        Food {
-            row: row.parse().unwrap(),
-            col: col.parse().unwrap(),
-        }
+        Food::new(Location::new(row.parse().unwrap(), col.parse().unwrap()))
     }
 }
 
@@ -60,14 +66,16 @@ pub enum Direction {
 
 #[derive(Debug, PartialEq)]
 pub struct Command {
-    row: i16,
-    col: i16,
+    location: Location,
     direction: Direction,
 }
 
 impl Command {
-    pub fn new(row: i16, col: i16, direction: Direction) -> Self {
-        Command { row, col, direction }
+    pub fn new(location: Location, direction: Direction) -> Self {
+        Command {
+            location,
+            direction,
+        }
     }
 }
 pub trait Strategy {
