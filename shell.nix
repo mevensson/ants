@@ -8,19 +8,19 @@ let
           name = "githistory";
           publisher = "donjayamanne";
           version = "0.4.6";
-          sha256 = "12vhs0jrzqh1gq38qfq0h3pfpnan01sx4a4ik14hdby0558han9j";
+          sha256 = "1wj838iv1xg25a604j4mccdcqhjjcgpaaq6yhnng1ph0s16ypin1";
         }
         {
           name = "gitlens";
           publisher = "eamodio";
-          version = "9.5.0";
-          sha256 = "1gzw65p3z1zkbq165xmki4cp2as3y8smyr8my9bv7j5hkz7p8xvs";
+          version = "9.5.1";
+          sha256 = "10s2g98wv8i0w6fr0pr5xyi8zmh229zn30jn1gg3m5szpaqi1v92";
         }
         {
           name = "rust";
           publisher = "rust-lang";
-          version = "0.5.3";
-          sha256 = "0nkf6cg1hmmsrvryjs5r0pdwsilfmrmy44wz47jjygyy62ixcad9";
+          version = "0.5.4";
+          sha256 = "1l4m31b4n4gwrfdk008ygj2yzb225kdm44hf7bj6rc7w6qzic2mj";
         }
       ];
     };
