@@ -50,8 +50,26 @@ impl Food {
     }
 }
 
-pub struct Command {}
+#[derive(Debug, PartialEq)]
+pub enum Direction {
+    North,
+    East,
+    South,
+    West,
+}
 
+#[derive(Debug, PartialEq)]
+pub struct Command {
+    row: i16,
+    col: i16,
+    direction: Direction,
+}
+
+impl Command {
+    pub fn new(row: i16, col: i16, direction: Direction) -> Self {
+        Command { row, col, direction }
+    }
+}
 pub trait Strategy {
     fn run(&mut self, ants: Vec<Ant>, food: Vec<Food>) -> Vec<Command>;
 }
