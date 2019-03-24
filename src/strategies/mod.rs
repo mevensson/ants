@@ -19,6 +19,24 @@ impl Location {
         let col_distance = (first.col - second.col) as i32;
         row_distance * row_distance + col_distance * col_distance
     }
+
+    pub fn closest_direction(first: Self, second: Self) -> Direction {
+        let row_distance = second.row - first.row;
+        let col_distance = second.col - first.col;
+        if row_distance.abs() >= col_distance.abs() {
+            if row_distance <= 0 {
+                return Direction::North;
+            } else {
+                return Direction::South;
+            }
+        } else {
+            if col_distance >= 0 {
+                return Direction::East;
+            } else {
+                return Direction::West;
+            }
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
