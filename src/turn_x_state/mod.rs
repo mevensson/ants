@@ -40,7 +40,7 @@ impl<'a> state_machine::State<'a> for TurnXState<'a> {
             }
         }
 
-        self.strategy.run(ants, food);
+        self.strategy.run(&ants, &food);
         writer.write("go\n".as_bytes()).ok();
 
         for line in reader.lines() {

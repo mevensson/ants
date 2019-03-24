@@ -26,11 +26,11 @@ fn should_calculate_distance_sq() {
     let col = 34;
 
     assert_eq!(
-        Location::distance_sq(Location::new(row, col), Location::new(row + 5, col + 10)),
+        Location::distance_sq(&Location::new(row, col), &Location::new(row + 5, col + 10)),
         5 * 5 + 10 * 10
     );
     assert_eq!(
-        Location::distance_sq(Location::new(row, col), Location::new(row - 5, col - 10)),
+        Location::distance_sq(&Location::new(row, col), &Location::new(row - 5, col - 10)),
         5 * 5 + 10 * 10
     );
 }
@@ -41,35 +41,35 @@ fn should_calculate_closest_direction() {
     let col = 34;
 
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row - 5, col - 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row - 5, col - 5)),
         Direction::North
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row - 5, col + 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row - 5, col + 5)),
         Direction::North
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row - 4, col + 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row - 4, col + 5)),
         Direction::East
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row + 4, col + 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row + 4, col + 5)),
         Direction::East
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row + 5, col - 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row + 5, col - 5)),
         Direction::South
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row + 5, col + 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row + 5, col + 5)),
         Direction::South
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row - 4, col - 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row - 4, col - 5)),
         Direction::West
     );
     assert_eq!(
-        Location::closest_direction(Location::new(row, col), Location::new(row + 4, col - 5)),
+        Location::closest_direction(&Location::new(row, col), &Location::new(row + 4, col - 5)),
         Direction::West
     );
 }

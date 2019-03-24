@@ -18,13 +18,13 @@ impl<'a> TestStrategy<'a> {
 }
 
 impl<'a> Strategy for TestStrategy<'a> {
-    fn run(&mut self, mut new_ants: Vec<Ant>, mut new_food: Vec<Food>) -> Vec<Command> {
+    fn run(&mut self, new_ants: &Vec<Ant>, new_food: &Vec<Food>) -> Vec<Command> {
         match &mut self.ants {
-            Some(ants) => ants.append(&mut new_ants),
+            Some(ants) => ants.extend(new_ants),
             None => {}
         }
         match &mut self.food {
-            Some(food) => food.append(&mut new_food),
+            Some(food) => food.extend(new_food),
             None => {}
         }
         Vec::new()

@@ -3,7 +3,7 @@ mod test;
 
 pub mod hunt_food;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Location {
     row: i16,
     col: i16,
@@ -14,13 +14,13 @@ impl Location {
         Location { row, col }
     }
 
-    pub fn distance_sq(first: Self, second: Self) -> i32 {
+    pub fn distance_sq(first: &Self, second: &Self) -> i32 {
         let row_distance = (first.row - second.row) as i32;
         let col_distance = (first.col - second.col) as i32;
         row_distance * row_distance + col_distance * col_distance
     }
 
-    pub fn closest_direction(first: Self, second: Self) -> Direction {
+    pub fn closest_direction(first: &Self, second: &Self) -> Direction {
         let row_distance = second.row - first.row;
         let col_distance = second.col - first.col;
         if row_distance.abs() >= col_distance.abs() {
@@ -39,7 +39,7 @@ impl Location {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ant {
     location: Location,
     owner: i16,
@@ -62,7 +62,7 @@ impl Ant {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Food {
     location: Location,
 }
@@ -80,7 +80,7 @@ impl Food {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Direction {
     North,
     East,
@@ -88,7 +88,7 @@ pub enum Direction {
     West,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Command {
     location: Location,
     direction: Direction,
@@ -103,5 +103,5 @@ impl Command {
     }
 }
 pub trait Strategy {
-    fn run(&mut self, ants: Vec<Ant>, food: Vec<Food>) -> Vec<Command>;
+    fn run(&mut self, ants: &Vec<Ant>, food: &Vec<Food>) -> Vec<Command>;
 }

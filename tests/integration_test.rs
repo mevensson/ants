@@ -12,7 +12,7 @@ impl TestStrategy {
 }
 
 impl Strategy for TestStrategy {
-    fn run(&mut self, _ants: Vec<Ant>, _food: Vec<Food>) -> Vec<Command> {
+    fn run(&mut self, _ants: &Vec<Ant>, _food: &Vec<Food>) -> Vec<Command> {
         Vec::new()
     }
 }
