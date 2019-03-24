@@ -19,3 +19,18 @@ fn should_parse_food() {
     let expected_food = Food::new(Location::new(1, 2));
     assert_eq!(food, expected_food);
 }
+
+#[test]
+fn should_calculate_distance_sq() {
+    let row = 12;
+    let col = 34;
+
+    assert_eq!(
+        Location::distance_sq(Location::new(row, col), Location::new(row + 5, col + 10)),
+        5 * 5 + 10 * 10
+    );
+    assert_eq!(
+        Location::distance_sq(Location::new(row, col), Location::new(row - 5, col - 10)),
+        5 * 5 + 10 * 10
+    );
+}

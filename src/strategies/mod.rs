@@ -13,6 +13,12 @@ impl Location {
     pub fn new(row: i16, col: i16) -> Self {
         Location { row, col }
     }
+
+    pub fn distance_sq(first: Self, second: Self) -> i32 {
+        let row_distance = (first.row - second.row) as i32;
+        let col_distance = (first.col - second.col) as i32;
+        row_distance * row_distance + col_distance * col_distance
+    }
 }
 
 #[derive(Debug, PartialEq)]
