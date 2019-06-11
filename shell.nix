@@ -46,8 +46,13 @@ in
       vscode-with-extensions
       which
       git
+
       cargo
-      rustup
+      rls
+      openssl
+      pkgconfig
+
+      libtensorflow
       python37Packages.Keras
       python37Packages.tensorflow
     ];
