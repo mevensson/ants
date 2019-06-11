@@ -39,7 +39,7 @@ def save_model(model, path_string):
                                   output_names=[out.op.name for out in model.outputs])
 
     path = pathlib.Path(path_string).absolute()
-    tf.io.write_graph(frozen_graph, str(path.parent), path.name, as_text=True)
+    tf.io.write_graph(frozen_graph, str(path.parent), path.name, as_text=False)
 
 def freeze_session(session, keep_var_names=None, output_names=None, clear_devices=True):
     graph = session.graph
