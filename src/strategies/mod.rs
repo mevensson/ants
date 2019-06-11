@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod test;
 
+pub mod dqn;
 pub mod hunt_food;
 
 use std::fmt;
