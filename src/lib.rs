@@ -1,3 +1,4 @@
+mod dqn;
 mod end_state;
 mod state_machine;
 mod strategies;
