@@ -5,6 +5,7 @@ authors = ["Mattias Evensson <mattias@evensson.eu>"]
 edition = "2018"
 
 [dependencies]
+tensorflow = "0.13.0"
 
 [dev-dependencies]
 matches = "0.1.8"
