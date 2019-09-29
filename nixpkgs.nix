@@ -1,7 +1,7 @@
 builtins.fetchGit {
   # Descriptive name to make the store path easier to identify
-  name = "nixos-unstable-2019-08-29";
+  name = "nixos-unstable-2019-09-29";
   url = https://github.com/nixos/nixpkgs/;
   # `git ls-remote https://github.com/nixos/nixpkgs-channels nixos-unstable`
-  rev = "8d1510abfb592339e13ce8f6db6f29c1f8b72924";
+  rev = "2436c27541b2f52deea3a4c1691216a02152e729";
 }
