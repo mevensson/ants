@@ -31,12 +31,14 @@ let
       ];
     };
   };
-  nixpkgs = import <nixpkgs> {
-    overlays = [ vscode_overlay ];
-  };
+  nixpkgs = import ./nixpkgs.nix;
 in
-  with nixpkgs;
-  with import ./default.nix;
+  with import nixpkgs {
+    overlays = [
+      vscode_overlay
+      (import ./overlay.nix)
+    ];
+  };
 
   pkgs.mkShell {
     inputsFrom = [
@@ -44,15 +46,13 @@ in
     ];
     buildInputs = [
       vscode-with-extensions
-      which
+
       git
+      less
+      which
 
-      cargo
       rls
-      openssl
-      pkgconfig
 
-      libtensorflow
       python37Packages.Keras
       python37Packages.tensorflow
     ];
