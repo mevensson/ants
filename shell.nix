@@ -13,20 +13,20 @@ let
         {
           name = "gitlens";
           publisher = "eamodio";
-          version = "9.5.1";
-          sha256 = "10s2g98wv8i0w6fr0pr5xyi8zmh229zn30jn1gg3m5szpaqi1v92";
+          version = "10.0.1";
+          sha256 = "0jp1hj3n5xc179afrvarjldnfg3h8sw16kjxcxv1a8wkwzir7iid";
         }
         {
           name = "rust";
           publisher = "rust-lang";
-          version = "0.5.4";
-          sha256 = "1l4m31b4n4gwrfdk008ygj2yzb225kdm44hf7bj6rc7w6qzic2mj";
+          version = "0.6.3";
+          sha256 = "1r5q1iclr64wmgglsr3na3sv0fha5di8xyccv7xwcv5jf8w5rz5y";
         }
         {
           name = "python";
           publisher = "ms-python";
-          version = "2019.5.18875";
-          sha256 = "10kywpisqd31sg8bj1jzri5ir68p65mlz17v9hlp21i1ngjvp5nz";
+          version = "2019.9.34911";
+          sha256 = "18c806dk1chmcnklr8v74fawaal2lkd644yq27pbvffriwj98fib";
         }
       ];
     };
