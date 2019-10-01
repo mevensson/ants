@@ -20,9 +20,9 @@ impl<'a> state_machine::State<'a> for EndState {
 
     fn parse(
         self: Box<Self>,
-        reader: &mut BufRead,
-        _writer: &mut Write,
-    ) -> Option<Box<state_machine::State<'a> + 'a>> {
+        reader: &mut dyn BufRead,
+        _writer: &mut dyn Write,
+    ) -> Option<Box<dyn state_machine::State<'a> + 'a>> {
         for line in reader.lines() {
             if line.unwrap() == "go" {
                 break;

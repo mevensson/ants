@@ -16,9 +16,9 @@ impl TestState {
 impl<'a> State<'a> for TestState {
     fn parse(
         self: Box<Self>,
-        _reader: &mut BufRead,
-        _writer: &mut Write,
-    ) -> Option<Box<State<'a> + 'a>> {
+        _reader: &mut dyn BufRead,
+        _writer: &mut dyn Write,
+    ) -> Option<Box<dyn State<'a> + 'a>> {
         match &self.next_state {
             Some(next_state) => Some(next_state.clone()),
             None => None,

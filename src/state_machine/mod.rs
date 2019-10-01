@@ -9,23 +9,23 @@ pub trait State<'a> {
     }
     fn parse(
         self: Box<Self>,
-        reader: &mut BufRead,
-        writer: &mut Write,
-    ) -> Option<Box<State<'a> + 'a>>;
+        reader: &mut dyn BufRead,
+        writer: &mut dyn Write,
+    ) -> Option<Box<dyn State<'a> + 'a>>;
 }
 
 pub struct StateMachine<'a> {
-    current_state: Option<Box<State<'a> + 'a>>,
+    current_state: Option<Box<dyn State<'a> + 'a>>,
 }
 
 impl<'a> StateMachine<'a> {
-    pub fn new(start_state: Box<State<'a> + 'a>) -> Self {
+    pub fn new(start_state: Box<dyn State<'a> + 'a>) -> Self {
         StateMachine {
             current_state: Some(start_state),
         }
     }
 
-    pub fn parse(&mut self, reader: &mut BufRead, writer: &mut Write) -> bool {
+    pub fn parse(&mut self, reader: &mut dyn BufRead, writer: &mut dyn Write) -> bool {
         match self.current_state.take() {
             Some(cs) => {
                 let res = cs.parse(reader, writer);

@@ -8,11 +8,11 @@ use super::strategies::{Ant, Food, Strategy};
 use std::io::{BufRead, Write};
 
 pub struct TurnXState<'a> {
-    strategy: &'a mut Strategy,
+    strategy: &'a mut dyn Strategy,
 }
 
 impl<'a> TurnXState<'a> {
-    pub fn new(strategy: &'a mut Strategy) -> Box<Self> {
+    pub fn new(strategy: &'a mut dyn Strategy) -> Box<Self> {
         Box::new(TurnXState { strategy })
     }
 }
@@ -24,9 +24,9 @@ impl<'a> state_machine::State<'a> for TurnXState<'a> {
 
     fn parse(
         self: Box<Self>,
-        reader: &mut BufRead,
-        writer: &mut Write,
-    ) -> Option<Box<state_machine::State<'a> + 'a>> {
+        reader: &mut dyn BufRead,
+        writer: &mut dyn Write,
+    ) -> Option<Box<dyn state_machine::State<'a> + 'a>> {
         let mut ants = Vec::new();
         let mut food = Vec::new();
         for line in reader.lines() {

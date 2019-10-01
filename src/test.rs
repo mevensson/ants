@@ -15,9 +15,9 @@ impl<'a> TestState<'a> {
 impl<'a> state_machine::State<'a> for TestState<'a> {
     fn parse(
         self: Box<Self>,
-        _reader: &mut BufRead,
-        _writer: &mut Write,
-    ) -> Option<Box<state_machine::State<'a> + 'a>> {
+        _reader: &mut dyn BufRead,
+        _writer: &mut dyn Write,
+    ) -> Option<Box<dyn state_machine::State<'a> + 'a>> {
         *self.num_calls -= 1;
         if *self.num_calls == 0 {
             None

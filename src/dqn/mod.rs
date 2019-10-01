@@ -1,35 +1,54 @@
+#[cfg(test)]
+mod test;
+use std::error::Error;
+use std::result::Result;
 use tensorflow::Graph;
 use tensorflow::ImportGraphDefOptions;
 use tensorflow::Session;
+use tensorflow::SessionOptions;
 use tensorflow::SessionRunArgs;
 use tensorflow::Tensor;
+use tensorflow::TensorType;
 
-pub struct Dqn {
-    input_name: &str;
-    output_name: &str;
-    graph: Graph;
-    session: Session;
+pub trait Dqn {
+    fn run<T: TensorType>(&mut self, input: Tensor<T>) -> Result<Tensor<T>, Box<dyn Error>>;
 }
 
-impl Dqn {
-    pub fn new(file_data: &[u8], input_name: &str, output_name: &str) -> Self {
+pub struct TensorflowDqn<'a> {
+    input_name: &'a str,
+    output_name: &'a str,
+    graph: Graph,
+    session: Session,
+}
+
+impl<'a> TensorflowDqn<'a> {
+    pub fn new(
+        file_data: &[u8],
+        input_name: &'a str,
+        output_name: &'a str,
+    ) -> Result<Self, Box<dyn Error>> {
         let mut graph = Graph::new();
-        graph.import_graph_def(file_data, &ImportGraphDefOptions::new());
-        let session = Session::new(&SessionOptions::new(), &graph)
-        Dqn {
-            input_name, output_name, graph, session
-        }
+        graph.import_graph_def(file_data, &ImportGraphDefOptions::new())?;
+        let session = Session::new(&SessionOptions::new(), &graph)?;
+        Ok(TensorflowDqn {
+            input_name,
+            output_name,
+            graph,
+            session,
+        })
     }
+}
 
-    pub fn run(&mut self, input_tensor: Tensor) -> Tensor {
+impl<'a> Dqn for TensorflowDqn<'a> {
+    fn run<T: TensorType>(&mut self, input_tensor: Tensor<T>) -> Result<Tensor<T>, Box<dyn Error>> {
         let mut args = SessionRunArgs::new();
-        let mut input_op = &self.graph.operation_by_name_required(input_name);
-        let mut output_op = &self.graph.operation_by_name_required(output_name);
-        args.add_feed(input_op, &tensor);
+        let input_op = &self.graph.operation_by_name_required(self.input_name)?;
+        let output_op = &self.graph.operation_by_name_required(self.output_name)?;
+        args.add_feed(input_op, 0, &input_tensor);
         let result_token = args.request_fetch(output_op, 0);
-        session.run(&mut args);
+        self.session.run(&mut args)?;
 
-        let result_tensor = args.fetch(result_token);
-        result_tensor
+        let result_tensor = args.fetch(result_token)?;
+        Ok(result_tensor)
     }
 }
