@@ -1,4 +1,4 @@
-{ rustPlatform, pkgconfig, openssl }:
+{ rustPlatform, pkgconfig, openssl, libtensorflow }:
 
 rustPlatform.buildRustPackage rec {
   pname = "ants";
@@ -11,6 +11,7 @@ rustPlatform.buildRustPackage rec {
 
   buildInputs = [
     openssl
+    libtensorflow
   ];
 
   src = ./.;
