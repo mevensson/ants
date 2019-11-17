@@ -4,6 +4,19 @@ mod test;
 use super::super::dqn::Dqn;
 use super::{Ant, Command, Food, Strategy};
 
+use tensorflow::Tensor;
+
+pub fn convert_input(ant: &Ant, food: &Vec<Food>) -> Tensor<i32> {
+    let mut result = Tensor::new(&[2, 100, 100]);
+    let ant_index = 100 * ant.location.row as usize + ant.location.col as usize;
+    result[ant_index] = 1;
+    for f in food {
+        let food_index = 100 * 100 + 100 * f.location.row as usize + f.location.col as usize;
+        result[food_index] = 1;
+    }
+    result
+}
+
 pub struct DqnStrategy<T: Dqn> {
     _dqn: T,
 }
