@@ -1,4 +1,4 @@
-use ants::{self, TensorflowDqn, DqnStrategy, StartState};
+use ants::{self, DqnStrategy, StartState, TensorflowDqn};
 use std::error::Error;
 use std::fs::File;
 use std::io;
@@ -14,13 +14,13 @@ fn main() {
             1
         }
     })
-    }
+}
 
 fn run() -> Result<(), Box<dyn Error>> {
     let filename = "model.pb";
     let mut model_data = Vec::new();
     File::open(filename)?.read_to_end(&mut model_data)?;
-    let dqn = TensorflowDqn::new(&model_data, "input", "output")?;
+    let dqn = TensorflowDqn::new(&model_data, "flatten_input", "dense_1/Softmax")?;
 
     let mut strategy = DqnStrategy::new(dqn);
     let start_state = StartState::new(&mut strategy);

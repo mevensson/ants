@@ -42,13 +42,19 @@ impl<'a> TensorflowDqn<'a> {
 impl<'a> Dqn for TensorflowDqn<'a> {
     fn run<T: TensorType>(&mut self, input_tensor: Tensor<T>) -> Result<Tensor<T>, Box<dyn Error>> {
         let mut args = SessionRunArgs::new();
-        let input_op = &self.graph.operation_by_name_required(self.input_name)?;
-        let output_op = &self.graph.operation_by_name_required(self.output_name)?;
+        let input_op = &self
+            .graph
+            .operation_by_name_required(self.input_name)
+            .unwrap();
+        let output_op = &self
+            .graph
+            .operation_by_name_required(self.output_name)
+            .unwrap();
         args.add_feed(input_op, 0, &input_tensor);
         let result_token = args.request_fetch(output_op, 0);
-        self.session.run(&mut args)?;
+        self.session.run(&mut args).unwrap();
 
-        let result_tensor = args.fetch(result_token)?;
+        let result_tensor = args.fetch(result_token).unwrap();
         Ok(result_tensor)
     }
 }

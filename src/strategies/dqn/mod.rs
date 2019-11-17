@@ -48,11 +48,10 @@ impl<T: Dqn> Strategy for DqnStrategy<T> {
         let mut result = Vec::new();
         for ant in ants {
             let input_tensor = convert_input(ant, food);
-            if let Ok(output_tensor) = self.dqn.run(input_tensor) {
-                let direction = convert_output(output_tensor);
-                let command = Command::new(ant.location, direction);
-                result.push(command);
-            }
+            let output_tensor = self.dqn.run(input_tensor).unwrap();
+            let direction = convert_output(output_tensor);
+            let command = Command::new(ant.location, direction);
+            result.push(command);
         }
         result
     }

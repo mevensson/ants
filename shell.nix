@@ -54,6 +54,9 @@ in
       rls
 
       python37Packages.Keras
+      python37Packages.pydot
+      python37Packages.pylint
       python37Packages.tensorflow
+      python37Packages.tensorflow-tensorboard
     ];
   }
