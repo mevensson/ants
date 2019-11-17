@@ -1,7 +1,7 @@
 use super::super::dqn::Dqn;
-use super::super::{Ant, Food, Location, Strategy};
-use super::convert_input;
+use super::super::{Ant, Direction, Food, Location, Strategy};
 use super::DqnStrategy;
+use super::{convert_input, convert_output};
 
 use std::error::Error;
 use std::result::Result;
@@ -44,7 +44,7 @@ fn convert_input_should_return_tensor_with_first_layer_one_for_ant_position_zero
 
     for x in 0..99 {
         for y in 0..99 {
-            let expected_result = if x == col && y == row { 1 } else { 0 };
+            let expected_result = if x == col && y == row { 1.0 } else { 0.0 };
             assert_eq!(tensor[100 * y as usize + x as usize], expected_result);
         }
     }
@@ -68,9 +68,9 @@ fn convert_input_should_return_tensor_with_second_layer_one_for_each_food_positi
         for y in 0..99 {
             let expected_result =
                 if (x == food_col_1 && y == food_row_1) || (x == food_col_2 && y == food_row_2) {
-                    1
+                    1.0
                 } else {
-                    0
+                    0.0
                 };
             assert_eq!(
                 tensor[100 * 100 + 100 * y as usize + x as usize],
@@ -78,6 +78,46 @@ fn convert_input_should_return_tensor_with_second_layer_one_for_each_food_positi
             );
         }
     }
+}
+
+#[test]
+fn convert_oupt_should_return_north_if_first_position_is_largest() {
+    let mut tensor = Tensor::new(&[4]);
+    tensor[0] = 0.1;
+
+    let direction = convert_output(tensor);
+
+    assert_eq!(direction, Direction::North);
+}
+
+#[test]
+fn convert_oupt_should_return_east_if_second_position_is_largest() {
+    let mut tensor = Tensor::new(&[4]);
+    tensor[1] = 0.1;
+
+    let direction = convert_output(tensor);
+
+    assert_eq!(direction, Direction::East);
+}
+
+#[test]
+fn convert_oupt_should_return_south_if_third_position_is_largest() {
+    let mut tensor = Tensor::new(&[4]);
+    tensor[2] = 0.1;
+
+    let direction = convert_output(tensor);
+
+    assert_eq!(direction, Direction::South);
+}
+
+#[test]
+fn convert_oupt_should_return_west_if_fourth_position_is_largest() {
+    let mut tensor = Tensor::new(&[4]);
+    tensor[3] = 0.1;
+
+    let direction = convert_output(tensor);
+
+    assert_eq!(direction, Direction::West);
 }
 
 #[test]
