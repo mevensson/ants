@@ -7,7 +7,7 @@ use super::{Ant, Command, Direction, Food, Strategy};
 use tensorflow::Tensor;
 
 pub fn convert_input(ant: &Ant, food: &Vec<Food>) -> Tensor<f32> {
-    let mut result = Tensor::new(&[2, 100, 100]);
+    let mut result = Tensor::new(&[1, 2, 100, 100]);
     let ant_index = 100 * ant.location.row as usize + ant.location.col as usize;
     result[ant_index] = 1.0;
     for f in food {

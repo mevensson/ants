@@ -3,7 +3,6 @@ mod test;
 use std::error::Error;
 use std::result::Result;
 use tensorflow::Graph;
-use tensorflow::ImportGraphDefOptions;
 use tensorflow::Session;
 use tensorflow::SessionOptions;
 use tensorflow::SessionRunArgs;
@@ -23,13 +22,14 @@ pub struct TensorflowDqn<'a> {
 
 impl<'a> TensorflowDqn<'a> {
     pub fn new(
-        file_data: &[u8],
+        directory: &'a str,
         input_name: &'a str,
         output_name: &'a str,
     ) -> Result<Self, Box<dyn Error>> {
         let mut graph = Graph::new();
-        graph.import_graph_def(file_data, &ImportGraphDefOptions::new())?;
-        let session = Session::new(&SessionOptions::new(), &graph)?;
+        let session =
+            Session::from_saved_model(&SessionOptions::new(), &["serve"], &mut graph, directory)
+                .unwrap();
         Ok(TensorflowDqn {
             input_name,
             output_name,
