@@ -27,6 +27,7 @@ def run_game(arguments):
     subprocess.run(
         [arguments.playgame,
          "--log_stream",
+         "--log_output",
          "--log_dir", arguments.log_dir,
          "--map_file", arguments.map_file,
          "--turns", "100",
