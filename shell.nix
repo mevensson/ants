@@ -53,6 +53,8 @@ in
 
       rls
 
+      python27Packages.python
+
       python37Packages.Keras
       python37Packages.pydot
       python37Packages.pylint
