@@ -3,6 +3,7 @@ import pathlib
 import sys
 import tensorflow as tf
 
+
 def main(arguments):
     parsed_arguments = parse_arguments(arguments)
 
@@ -14,6 +15,7 @@ def main(arguments):
 
     path = parsed_arguments.outfile
     save_model(model, path)
+
 
 def parse_arguments(arguments):
     parser = argparse.ArgumentParser(
@@ -32,6 +34,7 @@ def parse_arguments(arguments):
     args = parser.parse_args(arguments)
     return args
 
+
 def build_model(maps, width, height, output):
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Input(shape=(maps, width, height)))
@@ -41,12 +44,15 @@ def build_model(maps, width, height, output):
     model.compile(loss='mean_squared_error', optimizer='sgd')
     return model
 
+
 def save_model(model, path_string):
     print(model.summary())
     print("Input name:  " + model.input.op.name)
     print("Output name: " + model.output.op.name)
-    tf.compat.v1.keras.utils.plot_model(model, to_file='model.png', show_shapes=True)
+    tf.compat.v1.keras.utils.plot_model(
+        model, to_file='model.png', show_shapes=True)
     tf.saved_model.save(model, path_string)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

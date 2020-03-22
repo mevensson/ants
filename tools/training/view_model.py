@@ -3,12 +3,14 @@ import pathlib
 import sys
 import tensorflow as tf
 
+
 def main(arguments):
     parsed_arguments = parse_arguments(arguments)
 
     input_dir = parsed_arguments.indir
     output_dir = parsed_arguments.outdir
     import_to_tensorboard(input_dir, output_dir)
+
 
 def parse_arguments(arguments):
     parser = argparse.ArgumentParser(
@@ -20,6 +22,7 @@ def parse_arguments(arguments):
     args = parser.parse_args(arguments)
     return args
 
+
 def import_to_tensorboard(input_dir, output_dir):
     with tf.Session() as sess:
         tf.saved_model.loader.load(sess, ["serve"], input_dir)
@@ -27,6 +30,7 @@ def import_to_tensorboard(input_dir, output_dir):
         writer.add_graph(sess.graph)
         print("Model Imported. Visualize by running: "
               "tensorboard --logdir={}".format(output_dir))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
