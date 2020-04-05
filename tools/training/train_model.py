@@ -10,8 +10,8 @@ import tensorflow
 def main(arguments):
     parsed_arguments = parse_arguments(arguments)
 
-    experiences = load_experience(
-        parsed_arguments.experience_dir, parsed_arguments.bot, 0)
+    experiences = load_experiences(
+        parsed_arguments.experience_dir, parsed_arguments.bot, parsed_arguments.num_experiences)
     model = load_model(parsed_arguments.model_dir)
     model = train_model(experiences, model)
     save_model(model, parsed_arguments.model_dir)
@@ -24,9 +24,18 @@ def parse_arguments(arguments):
     parser.add_argument('--bot', help="Which bot number to train", type=int)
     parser.add_argument('--experience_dir', help="Path to experience dirctory")
     parser.add_argument('--model_dir', help="Path to model dirctory")
+    parser.add_argument('--num_experiences',
+                        help="Number of experiences to train on", type=int)
 
     args = parser.parse_args(arguments)
     return args
+
+
+def load_experiences(directory, bot_num, num_experiences):
+    result = []
+    for num in range(num_experiences):
+        result += load_experience(directory, bot_num, num)
+    return result
 
 
 def load_experience(directory, bot_num, experience_num):
@@ -139,7 +148,7 @@ def create_action(dir):
         result[1] = 1
     elif dir == 's':
         result[2] = 1
-    elif dit == 'w':
+    elif dir == 'w':
         result[3] = 1
     return result
 
