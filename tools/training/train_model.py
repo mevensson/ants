@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 import argparse
 import os.path
+import numpy
 import re
 import sys
+import tensorflow
 
 
 def main(arguments):
     parsed_arguments = parse_arguments(arguments)
+
     experiences = load_experience(
         parsed_arguments.experience_dir, parsed_arguments.bot, 0)
-    print(experiences)
+    model = load_model(parsed_arguments.model_dir)
+    model = train_model(experiences, model)
+    save_model(model, parsed_arguments.model_dir)
 
 
 def parse_arguments(arguments):
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--experience_dir', help="Path to experience dirctory")
     parser.add_argument('--bot', help="Which bot number to train", type=int)
+    parser.add_argument('--experience_dir', help="Path to experience dirctory")
+    parser.add_argument('--model_dir', help="Path to model dirctory")
 
     args = parser.parse_args(arguments)
     return args
@@ -85,6 +91,61 @@ def read_bot_turn(file):
             dir = re.findall(r'[ensw]', m.group('args'))[0]
             result.append({'pos': pos, 'dir': dir})
     return result
+
+
+def load_model(dir):
+    model = tensorflow.keras.models.load_model(dir)
+    return model
+
+
+def train_model(experiences, model):
+    input, output = convert_experiences(experiences)
+    model.fit(input, output)
+    return model
+
+
+def convert_experiences(experiences):
+    input_list = []
+    output_list = []
+    for experience in experiences:
+        food_map = create_food_map(experience['food'])
+        for action in experience['actions']:
+            ant_map = create_ant_map(action['pos'])
+            input_list.append(numpy.stack((ant_map, food_map)))
+            output_list.append(create_action(action['dir']))
+    inputs = numpy.stack(input_list)
+    outputs = numpy.stack(output_list)
+    return (inputs, outputs)
+
+
+def create_food_map(food_list):
+    result = numpy.zeros((100, 100))
+    for food in food_list:
+        result[food[0], food[1]] = 1
+    return result
+
+
+def create_ant_map(pos):
+    result = numpy.zeros((100, 100))
+    result[pos[0], pos[1]] = 1
+    return result
+
+
+def create_action(dir):
+    result = numpy.zeros(4)
+    if dir == 'n':
+        result[0] = 1
+    elif dir == 'e':
+        result[1] = 1
+    elif dir == 's':
+        result[2] = 1
+    elif dit == 'w':
+        result[3] = 1
+    return result
+
+
+def save_model(model, dir):
+    tensorflow.saved_model.save(model, dir)
 
 
 if __name__ == '__main__':
