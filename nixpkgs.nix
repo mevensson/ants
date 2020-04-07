@@ -3,5 +3,5 @@ builtins.fetchGit {
   name = "nixpkgs-unstable-2020-01-02";
   url = https://github.com/nixos/nixpkgs/;
   # `git ls-remote https://github.com/nixos/nixpkgs-channels nixpkgs-unstable`
-  rev = "9f03cb8562645cb1cd515b8553d1dc94c3402a2e";
+  rev = "8fc744839bdc6a23e37f6de9f67bd4916839acc9";
 }

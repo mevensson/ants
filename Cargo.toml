@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 argparse = "0.2.2"
-tensorflow = "0.13.0"
+tensorflow = "0.15.0"
 
 [dev-dependencies]
 matches = "0.1.8"

@@ -7,26 +7,26 @@ let
         {
           name = "githistory";
           publisher = "donjayamanne";
-          version = "0.4.13";
-          sha256 = "0alhmd1mi441l7cfv2p7xmz2w34l6vgs0dz8nhw2pap8w67mnyr3";
+          version = "0.6.5";
+          sha256 = "0v6f8mkdwm6c0ypjhra22iv5fmmjpdc8fnja70zjkvbgxb48cd2s";
         }
         {
           name = "gitlens";
           publisher = "eamodio";
-          version = "10.2.0";
-          sha256 = "0qnq9lr4m0j0syaciyv0zbj8rwm45pshpkagpfbf4pqkscsf80nr";
+          version = "10.2.1";
+          sha256 = "1bh6ws20yi757b4im5aa6zcjmsgdqxvr1rg86kfa638cd5ad1f97";
         }
         {
           name = "rust";
           publisher = "rust-lang";
-          version = "0.7.0";
-          sha256 = "16n787agjjfa68r6xv0lyqvx25nfwqw7bqbxf8x8mbb61qhbkws0";
+          version = "0.7.5";
+          sha256 = "0xgaqyg55bkjsbq5ci73va37pj8d3yr7g8kp7aiql0gz107500fw";
         }
         {
           name = "python";
           publisher = "ms-python";
-          version = "2020.1.58038";
-          sha256 = "09iawy1p2akan090461137d4p5gqqf0aanm9i534p0kmbxmjfpqv";
+          version = "2020.4.76186";
+          sha256 = "0arqz1778hp3sk95f3i1p1kyykpn9y7k1h256jpxn1m4723ccbn6";
         }
       ];
     };
