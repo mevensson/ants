@@ -108,18 +108,20 @@ def load_model(dir):
 
 
 def train_model(experiences, model):
-    input, output = convert_experiences(experiences)
+    height = model.inputs[0].shape[3]
+    width = model.inputs[0].shape[2]
+    input, output = convert_experiences(experiences, height, width)
     model.fit(input, output)
     return model
 
 
-def convert_experiences(experiences):
+def convert_experiences(experiences, height, width):
     input_list = []
     output_list = []
     for experience in experiences:
-        food_map = create_food_map(experience['food'])
+        food_map = create_food_map(experience['food'], height, width)
         for action in experience['actions']:
-            ant_map = create_ant_map(action['pos'])
+            ant_map = create_ant_map(action['pos'], height, width)
             input_list.append(numpy.stack((ant_map, food_map)))
             output_list.append(create_action(action['dir']))
     inputs = numpy.stack(input_list)
@@ -127,15 +129,15 @@ def convert_experiences(experiences):
     return (inputs, outputs)
 
 
-def create_food_map(food_list):
-    result = numpy.zeros((100, 100))
+def create_food_map(food_list, height, width):
+    result = numpy.zeros((width, height))
     for food in food_list:
         result[food[0], food[1]] = 1
     return result
 
 
-def create_ant_map(pos):
-    result = numpy.zeros((100, 100))
+def create_ant_map(pos, height, width):
+    result = numpy.zeros((width, height))
     result[pos[0], pos[1]] = 1
     return result
 

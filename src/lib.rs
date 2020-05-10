@@ -5,6 +5,7 @@ mod strategies;
 mod turn_0_state;
 mod turn_x_state;
 
+pub use crate::dqn::Dqn;
 pub use crate::dqn::TensorflowDqn;
 pub use crate::strategies::dqn::DqnStrategy;
 pub use crate::strategies::hunt_food::HuntFoodStrategy;

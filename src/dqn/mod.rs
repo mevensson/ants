@@ -11,6 +11,9 @@ use tensorflow::TensorType;
 
 pub trait Dqn {
     fn run<T: TensorType>(&mut self, input: Tensor<T>) -> Result<Tensor<T>, Box<dyn Error>>;
+
+    fn height(&self) -> u64;
+    fn width(&self) -> u64;
 }
 
 pub struct TensorflowDqn<'a> {
@@ -56,5 +59,23 @@ impl<'a> Dqn for TensorflowDqn<'a> {
 
         let result_tensor = args.fetch(result_token).unwrap();
         Ok(result_tensor)
+    }
+
+    fn height(&self) -> u64 {
+        let input = self
+            .graph
+            .operation_by_name_required(self.input_name)
+            .unwrap();
+        let shape = self.graph.tensor_shape(input).unwrap();
+        shape[3].unwrap() as u64
+    }
+
+    fn width(&self) -> u64 {
+        let input = self
+            .graph
+            .operation_by_name_required(self.input_name)
+            .unwrap();
+        let shape = self.graph.tensor_shape(input).unwrap();
+        shape[2].unwrap() as u64
     }
 }
