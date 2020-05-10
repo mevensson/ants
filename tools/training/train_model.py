@@ -111,7 +111,13 @@ def train_model(experiences, model):
     height = model.inputs[0].shape[3]
     width = model.inputs[0].shape[2]
     input, output = convert_experiences(experiences, height, width)
-    model.fit(input, output)
+    es = tensorflow.keras.callbacks.EarlyStopping(
+        monitor='val_acc', mode='auto', verbose=1)
+    model.fit(input, output,
+              epochs=100,
+              validation_split=0.3,
+              verbose=2,
+              callbacks=[es])
     return model
 
 

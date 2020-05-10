@@ -42,7 +42,8 @@ def build_model(maps, width, height, output):
     model.add(tf.keras.layers.Flatten())
     model.add(tf.keras.layers.Dense(10, activation='relu'))
     model.add(tf.keras.layers.Dense(output, activation='softmax'))
-    model.compile(loss='mean_squared_error', optimizer='sgd')
+    model.compile(loss='categorical_crossentropy', optimizer='sgd',
+                  metrics=['accuracy'])
     return model
 
 
