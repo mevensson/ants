@@ -51,11 +51,13 @@ impl<T: Dqn> Strategy for DqnStrategy<T> {
     fn run(&mut self, ants: &Vec<Ant>, food: &Vec<Food>) -> Vec<Command> {
         let mut result = Vec::new();
         for ant in ants {
-            let input_tensor = self.convert_input(ant, food);
-            let output_tensor = self.dqn.run(input_tensor).unwrap();
-            let direction = self.convert_output(output_tensor);
-            let command = Command::new(ant.location, direction);
-            result.push(command);
+            if ant.owner == 0 {
+                let input_tensor = self.convert_input(ant, food);
+                let output_tensor = self.dqn.run(input_tensor).unwrap();
+                let direction = self.convert_output(output_tensor);
+                let command = Command::new(ant.location, direction);
+                result.push(command);
+            }
         }
         result
     }
