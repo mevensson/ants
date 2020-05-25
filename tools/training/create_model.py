@@ -40,7 +40,7 @@ def build_model(maps, width, height, output):
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Input(shape=(maps, width, height)))
     model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(10, activation='relu'))
+    model.add(tf.keras.layers.Dense(2, activation='relu'))
     model.add(tf.keras.layers.Dense(output, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='sgd',
                   metrics=['accuracy'])
