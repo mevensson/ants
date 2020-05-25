@@ -43,16 +43,14 @@ fn convert_input_should_return_tensor_with_correct_size() {
 
     let dims = tensor.dims();
     assert_eq!(dims[0], 1);
-    assert_eq!(dims[1], 2);
+    assert_eq!(dims[1], 1);
     assert_eq!(dims[2], width);
     assert_eq!(dims[3], height);
 }
 
 #[test]
-fn convert_input_should_return_tensor_with_first_layer_one_for_ant_position_zero_otherwise() {
-    let col = 13;
-    let row = 23;
-    let ant = Ant::new(Location::new(row, col), 0);
+fn convert_input_should_return_empty_tensor_if_no_food() {
+    let ant = Ant::new(Location::new(13, 23), 0);
     let food = vec![];
     let width = 50;
     let height = 40;
@@ -61,43 +59,54 @@ fn convert_input_should_return_tensor_with_first_layer_one_for_ant_position_zero
 
     for x in 0..width as i16 {
         for y in 0..height as i16 {
-            let expected_result = if x == col && y == row { 1.0 } else { 0.0 };
-            assert_eq!(
-                tensor[width as usize * y as usize + x as usize],
-                expected_result
-            );
+            assert_eq!(tensor[width as usize * y as usize + x as usize], 0.0);
         }
     }
 }
 
 #[test]
-fn convert_input_should_return_tensor_with_second_layer_one_for_each_food_position_zero_otherwise()
+fn convert_input_should_return_tensor_with_one_for_each_food_position_relative_ant_zero_otherwise()
 {
-    let ant = Ant::new(Location::new(0, 0), 0);
-    let food_col_1 = 13;
-    let food_row_1 = 23;
-    let food_col_2 = 7;
-    let food_row_2 = 37;
+    let ant_col = 15;
+    let ant_row = 20;
+    let ant = Ant::new(Location::new(ant_row, ant_col), 0);
+    let food_left_col = 5;
+    let food_right_col = 24;
+    let food_top_row = 0;
+    let food_bottom_row = 39;
     let food = vec![
-        Food::new(Location::new(food_row_1, food_col_1)),
-        Food::new(Location::new(food_row_2, food_col_2)),
+        Food::new(Location::new(food_top_row, food_left_col)),
+        Food::new(Location::new(food_bottom_row, food_right_col)),
+        Food::new(Location::new(food_top_row - 1, food_left_col)), // above
+        Food::new(Location::new(food_bottom_row + 1, food_right_col)), // below
+        Food::new(Location::new(food_top_row, food_left_col - 1)), // too left
+        Food::new(Location::new(food_bottom_row, food_right_col + 1)), // too right
     ];
-    let width: usize = 50;
+    let width: usize = 20;
     let height: usize = 40;
     let strategy = DqnStrategy::new(TestDqn::new(width as u64, height as u64));
     let tensor = strategy.convert_input(&ant, &food);
 
+    let half_height = (height / 2) as i16;
+    let half_width = (width / 2) as i16;
+    let food_x_offset_1 = food_left_col - ant_col + half_width;
+    let food_y_offset_1 = food_top_row - ant_row + half_height;
+    let food_x_offset_2 = food_right_col - ant_col + half_width;
+    let food_y_offset_2 = food_bottom_row - ant_row + half_height;
     for x in 0..width as i16 {
         for y in 0..height as i16 {
-            let expected_result =
-                if (x == food_col_1 && y == food_row_1) || (x == food_col_2 && y == food_row_2) {
-                    1.0
-                } else {
-                    0.0
-                };
+            let expected_result = if (x == food_x_offset_1 && y == food_y_offset_1)
+                || (x == food_x_offset_2 && y == food_y_offset_2)
+            {
+                1.0
+            } else {
+                0.0
+            };
+            let index = width * y as usize + x as usize;
             assert_eq!(
-                tensor[width * height + width * y as usize + x as usize],
-                expected_result
+                tensor[index as usize], expected_result,
+                "index = {}, x = {}, y = {}",
+                index, x, y
             );
         }
     }

@@ -108,8 +108,8 @@ def load_model(dir):
 
 
 def train_model(experiences, model):
-    height = model.inputs[0].shape[3]
-    width = model.inputs[0].shape[2]
+    height = model.inputs[0].shape[3].value
+    width = model.inputs[0].shape[2].value
     input, output = convert_experiences(experiences, height, width)
     es = tensorflow.keras.callbacks.EarlyStopping(
         monitor='val_acc', mode='auto', verbose=1)
@@ -125,26 +125,23 @@ def convert_experiences(experiences, height, width):
     input_list = []
     output_list = []
     for experience in experiences:
-        food_map = create_food_map(experience['food'], height, width)
         for action in experience['actions']:
-            ant_map = create_ant_map(action['pos'], height, width)
-            input_list.append(numpy.stack((ant_map, food_map)))
+            food_map = create_food_map(
+                action['pos'], experience['food'], height, width)
+            input_list.append(numpy.stack((food_map,)))
             output_list.append(create_action(action['dir']))
     inputs = numpy.stack(input_list)
     outputs = numpy.stack(output_list)
     return (inputs, outputs)
 
 
-def create_food_map(food_list, height, width):
+def create_food_map(pos, food_list, height, width):
     result = numpy.zeros((width, height))
     for food in food_list:
-        result[food[0], food[1]] = 1
-    return result
-
-
-def create_ant_map(pos, height, width):
-    result = numpy.zeros((width, height))
-    result[pos[0], pos[1]] = 1
+        x = food[0] - pos[0] + width // 2
+        y = food[1] - pos[1] + height // 2
+        if 0 <= x < width and 0 <= y < height:
+            result[x, y] = 1
     return result
 
 

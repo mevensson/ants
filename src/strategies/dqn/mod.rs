@@ -18,15 +18,20 @@ impl<T: Dqn> DqnStrategy<T> {
     pub fn convert_input(&self, ant: &Ant, food: &Vec<Food>) -> Tensor<f32> {
         let height = self.dqn.height();
         let width = self.dqn.width();
-        let mut result = Tensor::new(&[1, 2, width, height]);
-        let height = height as usize;
-        let width = width as usize;
-        let ant_index = width * ant.location.row as usize + ant.location.col as usize;
-        result[ant_index] = 1.0;
+        let mut result = Tensor::new(&[1, 1, width, height]);
+        let half_height = (height / 2) as i16;
+        let half_width = (width / 2) as i16;
         for f in food {
-            let food_index =
-                height * width + width * f.location.row as usize + f.location.col as usize;
-            result[food_index] = 1.0;
+            let food_x_offset = f.location.col - ant.location.col + half_width;
+            let food_y_offset = f.location.row - ant.location.row + half_height;
+            if food_x_offset >= 0
+                && food_x_offset < width as i16
+                && food_y_offset >= 0
+                && food_y_offset < height as i16
+            {
+                let food_index = width as usize * food_y_offset as usize + food_x_offset as usize;
+                result[food_index] = 1.0;
+            }
         }
         result
     }
