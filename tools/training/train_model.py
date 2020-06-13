@@ -1,135 +1,111 @@
 #!/usr/bin/env python3
 import argparse
-import os.path
 import numpy
-import re
+import os.path
 import sys
-import tensorflow
+
+from experiences import experiences
+from game import Game, run_game
+from model import Model
 
 
 def main(arguments):
     parsed_arguments = parse_arguments(arguments)
 
-    experiences = load_experiences(
-        parsed_arguments.experience_dir, parsed_arguments.bot, parsed_arguments.num_experiences)
-    model = load_model(parsed_arguments.model_dir)
-    model = train_model(experiences, model)
-    save_model(model, parsed_arguments.model_dir)
+    model = Model()
+    model.create(7, 7)
+    model.save(parsed_arguments.model_dir)
+    for i in range(parsed_arguments.num_iterations):
+        exploration_factor = 0.75 - 0.5 * i / parsed_arguments.num_iterations
+        run_game(parsed_arguments.playgame_path,
+                 parsed_arguments.map_path,
+                 parsed_arguments.log_dir,
+                 parsed_arguments.exe_path,
+                 parsed_arguments.model_dir,
+                 parsed_arguments.turns,
+                 parsed_arguments.games,
+                 exploration_factor)
+        games = load_games(parsed_arguments.log_dir, 1, parsed_arguments.games)
+        print(f'Iteration: {i + 1} of {parsed_arguments.num_iterations}')
+        print_score(games)
+        print(f'Exploration factor: {exploration_factor}')
+        for _ in range(3):
+            games = load_games(parsed_arguments.log_dir,
+                               1, parsed_arguments.games)
+            input, output = convert_experiences(experiences(games), model)
+            model.train(input, output)
+        model.save(parsed_arguments.model_dir)
 
 
 def parse_arguments(arguments):
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--bot', help="Which bot number to train", type=int)
-    parser.add_argument('--experience_dir', help="Path to experience dirctory")
-    parser.add_argument('--model_dir', help="Path to model dirctory")
-    parser.add_argument('--num_experiences',
-                        help="Number of experiences to train on", type=int)
+    parser.add_argument('--playgame_path', help="Path to playgame script")
+    parser.add_argument('--map_path', help="Path to playgame script")
+    parser.add_argument(
+        '--log_dir', help="Path to directory where game logs should be saved")
+    parser.add_argument('--exe_path', help="Path to bot executable")
+    parser.add_argument(
+        '--model_dir', help="Path to directory where model should be saved")
+    parser.add_argument('--num_iterations',
+                        help="Number of iterations",
+                        type=int)
+    parser.add_argument('--games',
+                        help="Number of games each iteration",
+                        type=int)
+    parser.add_argument('--turns',
+                        help="Number of turns each game",
+                        type=int)
 
     args = parser.parse_args(arguments)
     return args
 
 
-def load_experiences(directory, bot_num, num_experiences):
-    result = []
-    for num in range(num_experiences):
-        result += load_experience(directory, bot_num, num)
-    return result
+def load_games(directory, bot_num, num_games):
+    for game_num in range(num_games):
+        yield Game(directory, game_num, bot_num)
 
 
-def load_experience(directory, bot_num, experience_num):
-    stream_filename = os.path.join(directory, f'{experience_num}.stream')
-    bot_filename = os.path.join(
-        directory, f'{experience_num}.bot{bot_num}.output')
-    result = []
-    with open(stream_filename) as stream_file, open(bot_filename) as bot_file:
-        read_stream_turn_0(stream_file)
-        read_bot_turn_0(bot_file)
-        while True:
-            turn = read_stream_turn(stream_file, bot_num)
-            if turn:
-                turn['actions'] = read_bot_turn(bot_file)
-                result.append(turn)
-            else:
-                break
-    return result
+def print_score(games):
+    sum_scores = 0
+    num_scores = 0
+    for game in games:
+        last_turn = None
+        for last_turn in game.turns():
+            pass
+        if last_turn:
+            score = len(last_turn.actions)
+            sum_scores += score
+            num_scores += 1
+    avg_score = sum_scores / num_scores
+    print(f'Average score: {avg_score}')
 
 
-def read_stream_turn_0(file):
-    for line in file:
-        m = re.match(r'turn (?P<turn>\d+)', line)
-        if m and int(m.group('turn')) == 1:
-            return
-    raise SystemExit("Error: could not find turn 1")
-
-
-def read_bot_turn_0(file):
-    file.readline()
-
-
-def read_stream_turn(file, bot_num):
-    result = {'score': None, 'food': []}
-    for line in file:
-        m = re.match(r'(?P<key>\w+)(?P<args>.*)', line)
-        if not m:
-            raise SystemExit(f'Error: failed to parse stream line:\n{line}')
-        elif m.group('key') == 'end':
-            return None
-        elif m.group('key') == 'turn':
-            break
-        elif m.group('key') == 'score':
-            result['score'] = re.findall(r'\d+', m.group('args'))[bot_num - 1]
-        elif m.group('key') == 'f':
-            result['food'].append(tuple(int(val)
-                                        for val in re.findall(r'\d+', m.group('args'))))
-    return result
-
-
-def read_bot_turn(file):
-    result = []
-    for line in file:
-        m = re.match(r'(?P<key>\S+)(?P<args>.*)', line)
-        if not m:
-            raise SystemExit(f'Error: failed to parse bot line:\n{line}')
-        elif m.group('key') == '#':
-            break
-        elif m.group('key') == 'o':
-            pos = tuple(int(val)
-                        for val in re.findall(r'\d+', m.group('args')))
-            dir = re.findall(r'[ensw]', m.group('args'))[0]
-            result.append({'pos': pos, 'dir': dir})
-    return result
-
-
-def load_model(dir):
-    model = tensorflow.keras.models.load_model(dir)
-    return model
-
-
-def train_model(experiences, model):
-    height = model.inputs[0].shape[3].value
-    width = model.inputs[0].shape[2].value
-    input, output = convert_experiences(experiences, height, width)
-    es = tensorflow.keras.callbacks.EarlyStopping(
-        monitor='val_acc', mode='auto', verbose=1)
-    model.fit(input, output,
-              epochs=100,
-              validation_split=0.3,
-              verbose=2,
-              callbacks=[es])
-    return model
-
-
-def convert_experiences(experiences, height, width):
+def convert_experiences(experiences, model):
+    height = model.height()
+    width = model.width()
     input_list = []
     output_list = []
+    turn = 1
     for experience in experiences:
-        for action in experience['actions']:
+        reward = 10 * (len(experience.next_next_turn.actions) -
+                       len(experience.next_turn.actions))
+        #print(f'Turn: {turn}')
+        turn += 1
+        for action in experience.turn.actions:
             food_map = create_food_map(
-                action['pos'], experience['food'], height, width)
-            input_list.append(numpy.stack((food_map,)))
-            output_list.append(create_action(action['dir']))
+                action['pos'], experience.turn.food, height, width)
+            state = numpy.stack((food_map,))
+            input_list.append(state)
+            next_food_map = create_food_map(
+                action['pos'], experience.next_turn.food, height, width)
+            next_state = numpy.stack((next_food_map,))
+            output = create_output(model, reward, state,
+                                   next_state, action['dir'])
+            output_list.append(output)
+            # print(state)
+            # print(output)
     inputs = numpy.stack(input_list)
     outputs = numpy.stack(output_list)
     return (inputs, outputs)
@@ -137,7 +113,9 @@ def convert_experiences(experiences, height, width):
 
 def create_food_map(pos, food_list, height, width):
     result = numpy.zeros((width, height))
+    #print(f'Pos: {pos}')
     for food in food_list:
+        #print(f'Food: {food}')
         x = food[0] - pos[0] + width // 2
         y = food[1] - pos[1] + height // 2
         if 0 <= x < width and 0 <= y < height:
@@ -145,21 +123,21 @@ def create_food_map(pos, food_list, height, width):
     return result
 
 
-def create_action(dir):
-    result = numpy.zeros(4)
+def create_output(model, reward, state, next_state, dir):
+    output = model.predict(numpy.stack((state,)))[0]
+    value = reward + 0.9 * \
+        numpy.argmax(model.predict(numpy.stack((next_state,))))
     if dir == 'n':
-        result[0] = 1
+        output[0] = value
     elif dir == 'e':
-        result[1] = 1
+        output[1] = value
     elif dir == 's':
-        result[2] = 1
+        output[2] = value
     elif dir == 'w':
-        result[3] = 1
-    return result
-
-
-def save_model(model, dir):
-    tensorflow.saved_model.save(model, dir)
+        output[3] = value
+    else:
+        raise SystemExit(f'Error: invalid direction "{dir}"')
+    return output
 
 
 if __name__ == '__main__':
