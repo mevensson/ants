@@ -5,8 +5,9 @@ authors = ["Mattias Evensson <mattias@evensson.eu>"]
 edition = "2018"
 
 [dependencies]
-argparse = "0.2.2"
-tensorflow = "0.15.0"
+argparse = "0.2"
+rand = "0.7"
+tensorflow = "0.15"
 
 [dev-dependencies]
-matches = "0.1.8"
+matches = "0.1"

@@ -4,15 +4,20 @@ mod test;
 use super::super::dqn::Dqn;
 use super::{Ant, Command, Direction, Food, Strategy};
 
+use rand::Rng;
 use tensorflow::Tensor;
 
 pub struct DqnStrategy<T: Dqn> {
     dqn: T,
+    exploration_factor: f64,
 }
 
 impl<T: Dqn> DqnStrategy<T> {
-    pub fn new(dqn: T) -> Self {
-        DqnStrategy { dqn }
+    pub fn new(dqn: T, exploration_factor: f64) -> Self {
+        DqnStrategy {
+            dqn,
+            exploration_factor,
+        }
     }
 
     pub fn convert_input(&self, ant: &Ant, food: &Vec<Food>) -> Tensor<f32> {
@@ -36,12 +41,18 @@ impl<T: Dqn> DqnStrategy<T> {
         result
     }
     pub fn convert_output(&self, tensor: Tensor<f32>) -> Direction {
-        let max_index = tensor
-            .iter()
-            .enumerate()
-            .max_by(|(_, a), (_, b)| a.partial_cmp(b).expect("Found NaN in tensor output"))
-            .map(|(index, _)| index);
-        match max_index {
+        let mut rng = rand::thread_rng();
+        let x: f64 = rng.gen();
+        let index = if x < self.exploration_factor {
+            Some(rng.gen_range(0, 4))
+        } else {
+            tensor
+                .iter()
+                .enumerate()
+                .max_by(|(_, a), (_, b)| a.partial_cmp(b).expect("Found NaN in tensor output"))
+                .map(|(index, _)| index)
+        };
+        match index {
             Some(0) => Direction::North,
             Some(1) => Direction::East,
             Some(2) => Direction::South,

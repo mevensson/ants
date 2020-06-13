@@ -17,12 +17,18 @@ fn main() {
 
 fn run() -> Result<(), Box<dyn Error>> {
     let mut model = "model".to_string();
+    let mut exploration_factor = 0.0;
     {
         let mut parser = ArgumentParser::new();
         parser.set_description("A DQN based ants bot.");
         parser
             .refer(&mut model)
             .add_option(&["-m", "--model"], Store, "Path to model directory");
+        parser.refer(&mut exploration_factor).add_option(
+            &["-e", "--exploration-factor"],
+            Store,
+            "Likelihood to do random exploration",
+        );
         parser.parse_args_or_exit();
     }
     let dqn = TensorflowDqn::new(
@@ -31,7 +37,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         "StatefulPartitionedCall",
     )?;
 
-    let mut strategy = DqnStrategy::new(dqn);
+    let mut strategy = DqnStrategy::new(dqn, exploration_factor);
     let start_state = StartState::new(&mut strategy);
 
     let stdin = io::stdin();
