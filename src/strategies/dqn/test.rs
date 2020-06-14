@@ -38,7 +38,7 @@ fn convert_input_should_return_tensor_with_correct_size() {
     let height = 40;
     let ant = Ant::new(Location::new(0, 0), 0);
     let food = vec![];
-    let strategy = DqnStrategy::new(TestDqn::new(width, height));
+    let strategy = DqnStrategy::new(TestDqn::new(width, height), 0.0);
     let tensor = strategy.convert_input(&ant, &food);
 
     let dims = tensor.dims();
@@ -54,7 +54,7 @@ fn convert_input_should_return_empty_tensor_if_no_food() {
     let food = vec![];
     let width = 50;
     let height = 40;
-    let strategy = DqnStrategy::new(TestDqn::new(width, height));
+    let strategy = DqnStrategy::new(TestDqn::new(width, height), 0.0);
     let tensor = strategy.convert_input(&ant, &food);
 
     for x in 0..width as i16 {
@@ -84,7 +84,7 @@ fn convert_input_should_return_tensor_with_one_for_each_food_position_relative_a
     ];
     let width: usize = 20;
     let height: usize = 40;
-    let strategy = DqnStrategy::new(TestDqn::new(width as u64, height as u64));
+    let strategy = DqnStrategy::new(TestDqn::new(width as u64, height as u64), 0.0);
     let tensor = strategy.convert_input(&ant, &food);
 
     let half_height = (height / 2) as i16;
@@ -117,7 +117,7 @@ fn convert_output_should_return_north_if_first_position_is_largest() {
     let mut tensor = Tensor::new(&[4]);
     tensor[0] = 0.1;
 
-    let strategy = DqnStrategy::new(TestDqn::new(50, 40));
+    let strategy = DqnStrategy::new(TestDqn::new(50, 40), 0.0);
     let direction = strategy.convert_output(tensor);
 
     assert_eq!(direction, Direction::North);
@@ -128,7 +128,7 @@ fn convert_output_should_return_east_if_second_position_is_largest() {
     let mut tensor = Tensor::new(&[4]);
     tensor[1] = 0.1;
 
-    let strategy = DqnStrategy::new(TestDqn::new(50, 40));
+    let strategy = DqnStrategy::new(TestDqn::new(50, 40), 0.0);
     let direction = strategy.convert_output(tensor);
 
     assert_eq!(direction, Direction::East);
@@ -139,7 +139,7 @@ fn convert_output_should_return_south_if_third_position_is_largest() {
     let mut tensor = Tensor::new(&[4]);
     tensor[2] = 0.1;
 
-    let strategy = DqnStrategy::new(TestDqn::new(50, 40));
+    let strategy = DqnStrategy::new(TestDqn::new(50, 40), 0.0);
     let direction = strategy.convert_output(tensor);
 
     assert_eq!(direction, Direction::South);
@@ -150,7 +150,7 @@ fn convert_output_should_return_west_if_fourth_position_is_largest() {
     let mut tensor = Tensor::new(&[4]);
     tensor[3] = 0.1;
 
-    let strategy = DqnStrategy::new(TestDqn::new(50, 40));
+    let strategy = DqnStrategy::new(TestDqn::new(50, 40), 0.0);
     let direction = strategy.convert_output(tensor);
 
     assert_eq!(direction, Direction::West);
@@ -161,7 +161,7 @@ fn should_have_no_commands_on_empty_ant_list() {
     let ants = vec![];
     let food = vec![Food::new(Location::new(1, 2))];
 
-    let mut strategy = DqnStrategy::new(TestDqn::new(40, 50));
+    let mut strategy = DqnStrategy::new(TestDqn::new(40, 50), 0.0);
     let commands = strategy.run(&ants, &food);
 
     assert_eq!(commands.len(), 0);
@@ -175,7 +175,7 @@ fn should_have_no_commands_on_list_with_only_enemy_ants() {
     ];
     let food = vec![Food::new(Location::new(1, 2))];
 
-    let mut strategy = DqnStrategy::new(TestDqn::new(40, 50));
+    let mut strategy = DqnStrategy::new(TestDqn::new(40, 50), 0.0);
     let commands = strategy.run(&ants, &food);
 
     assert_eq!(commands.len(), 0);
